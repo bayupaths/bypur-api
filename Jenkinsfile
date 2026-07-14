@@ -27,7 +27,15 @@ pipeline {
       }
     }
 
-    // 3. SonarQube Analysis
+    // 3. Run Tests and Generate Coverage
+    stage('Go Test Coverage') {
+      steps {
+        sh 'go test ./... -coverpkg=./internal/...,./pkg/... -coverprofile=coverage.out'
+        echo 'Go test coverage report generated'
+      }
+    }
+
+    // 4. SonarQube Analysis
     stage('SonarQube Analysis') {
       steps {
         script {
@@ -39,7 +47,7 @@ pipeline {
       }
     }
 
-    // 4. Quality Gate Check
+    // 5. Quality Gate Check
     stage('Quality Gate') {
       steps {
         script {
@@ -68,7 +76,7 @@ pipeline {
       }
     }
 
-    // 5. Build Docker Image
+    // 6. Build Docker Image
     stage('Build Docker Image') {
       steps {
         script {
@@ -78,7 +86,7 @@ pipeline {
       }
     }
 
-    // 6. Deploy to Docker Container
+    // 7. Deploy to Docker Container
     stage('Deploy') {
       steps {
         script {
