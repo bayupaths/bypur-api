@@ -1,0 +1,35 @@
+# Binaries and executable matching
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/api
+
+# Test binaries
+*.test
+*.out
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Temporary files
+/tmp/
+/scratch/

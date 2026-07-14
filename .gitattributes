@@ -1,0 +1,14 @@
+# Enforce LF line endings for all text files
+* text=auto eol=lf
+
+# Explicitly declare Go source files
+*.go text eol=lf
+
+# Explicitly declare SQL source files
+*.sql text eol=lf
+
+# Denotate markdown documentation
+*.md text eol=lf
+
+# Keep script files executing safely on Linux/Unix
+*.sh text eol=lf
