@@ -1,7 +1,8 @@
 package config
 
 import (
-	"log"
+	"log/slog"
+	"os"
 	"strings"
 
 	"github.com/caarlos0/env/v10"
@@ -53,6 +54,7 @@ type MailConfig struct {
 type LogConfig struct {
 	Level  string `env:"LEVEL" envDefault:"debug"`
 	Format string `env:"FORMAT" envDefault:"json"`
+	Dir    string `env:"DIR" envDefault:"logs"`
 }
 
 type FrontendConfig struct {
@@ -87,11 +89,13 @@ func LoadConfig() *Config {
 
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {
-		log.Fatalf("Failed to load ENV configuration: %v", err)
+		slog.Error("Failed to load ENV configuration", "error", err)
+		os.Exit(1)
 	}
 
 	if len(cfg.JWT.Secret) < 32 {
-		log.Fatalf("JWT_SECRET is too short! It must be at least 32 characters long for security.")
+		slog.Error("JWT_SECRET is too short — must be at least 32 characters for security")
+		os.Exit(1)
 	}
 
 	cfg.Server.ParsedCorsOrigins = ParseCorsOrigins(cfg.Server.CorsOrigins)
