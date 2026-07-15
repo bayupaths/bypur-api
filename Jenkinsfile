@@ -109,12 +109,12 @@ pipeline {
                 --cpus="0.5" \
                 --restart=unless-stopped \
                 -p 3001:3001 \
-                -e ENV=production \
-                -e PORT=3001 \
-                -e DATABASE_URL="${DATABASE_URL}" \
+                -e APP_ENV=production \
+                -e SERVER_PORT=3001 \
+                -e DB_URL="${DATABASE_URL}" \
                 -e JWT_SECRET="${JWT_SECRET}" \
-                -e CORS_ORIGIN="${CORS_ORIGIN}" \
-                -e X_API_KEY="${X_API_KEY}" \
+                -e SERVER_CORS_ORIGIN="${CORS_ORIGIN}" \
+                -e SECURITY_X_API_KEY="${X_API_KEY}" \
                 bypur-api-go:latest
               
               # Tunggu container start
