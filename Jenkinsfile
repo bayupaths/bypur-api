@@ -8,6 +8,7 @@ pipeline {
     PRODUCTION_SERVER_IP = "${env.PRODUCTION_SERVER_IP}"
     SONAR_HOST_URL       = "${env.SONAR_HOST_URL}"
     DOCKER_IMAGE         = 'bypur-api-go'
+    PATH                 = "/usr/local/go/bin:${env.PATH}"
   }
 
   stages {
