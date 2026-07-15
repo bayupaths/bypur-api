@@ -31,6 +31,7 @@ pipeline {
     // 3. Run Tests and Generate Coverage
     stage('Go Test Coverage') {
       steps {
+        sh 'go clean -testcache'
         sh 'go test ./... -coverpkg=./internal/...,./pkg/... -coverprofile=coverage.out'
         echo 'Go test coverage report generated'
       }
