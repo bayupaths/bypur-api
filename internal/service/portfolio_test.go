@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"bayupur-portofolio-be/internal/model"
+	"github.com/bayupaths/bypur-api/internal/model"
 )
 
 var errNotFound = errors.New("not found")

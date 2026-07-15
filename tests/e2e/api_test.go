@@ -6,11 +6,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/handler"
-	"bayupur-portofolio-be/internal/model"
-	"bayupur-portofolio-be/internal/repository"
-	"bayupur-portofolio-be/internal/service"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/handler"
+	"github.com/bayupaths/bypur-api/internal/model"
+	"github.com/bayupaths/bypur-api/internal/repository"
+	"github.com/bayupaths/bypur-api/internal/service"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -31,8 +31,12 @@ func TestAPI_GetProfile(t *testing.T) {
 
 	portfolioService := service.NewPortfolioService(mockProfileRepo, nil, mockSkillRepo, nil, nil, nil)
 	cfg := &config.Config{
-		XApiKey:           "test-api-key",
-		ParsedCorsOrigins: []string{"http://localhost:3000"},
+		Security: config.SecurityConfig{
+			XApiKey: "test-api-key",
+		},
+		Server: config.ServerConfig{
+			ParsedCorsOrigins: []string{"http://localhost:3000"},
+		},
 	}
 
 	// Setup Router

@@ -3,7 +3,7 @@ package unit
 import (
 	"testing"
 
-	"bayupur-portofolio-be/internal/dto"
+	"github.com/bayupaths/bypur-api/internal/dto"
 )
 
 func TestProfileRequest_ToModel(t *testing.T) {

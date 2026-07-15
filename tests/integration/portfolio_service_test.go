@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"bayupur-portofolio-be/internal/model"
-	"bayupur-portofolio-be/internal/repository"
-	"bayupur-portofolio-be/internal/service"
+	"github.com/bayupaths/bypur-api/internal/model"
+	"github.com/bayupaths/bypur-api/internal/repository"
+	"github.com/bayupaths/bypur-api/internal/service"
 )
 
 // Mock repositories implementation

@@ -6,15 +6,15 @@ import (
 	"testing"
 	"time"
 
-	"bayupur-portofolio-be/internal/config"
-	tokenjwt "bayupur-portofolio-be/pkg/jwt"
+	"github.com/bayupaths/bypur-api/internal/config"
+	tokenjwt "github.com/bayupaths/bypur-api/pkg/jwt"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func TestAuthenticateApiKey(t *testing.T) {
 	app := fiber.New()
-	app.Get("/", AuthenticateApiKey(&config.Config{XApiKey: "secret"}), func(c *fiber.Ctx) error {
+	app.Get("/", AuthenticateApiKey(&config.Config{Security: config.SecurityConfig{XApiKey: "secret"}}), func(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNoContent)
 	})
 
@@ -32,7 +32,7 @@ func TestAuthenticateApiKey(t *testing.T) {
 
 func TestAuthenticateApiKeyRejectsInvalidKey(t *testing.T) {
 	app := fiber.New()
-	app.Get("/", AuthenticateApiKey(&config.Config{XApiKey: "secret"}), func(c *fiber.Ctx) error {
+	app.Get("/", AuthenticateApiKey(&config.Config{Security: config.SecurityConfig{XApiKey: "secret"}}), func(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNoContent)
 	})
 
@@ -52,7 +52,7 @@ func TestAuthenticateJWT(t *testing.T) {
 	}
 
 	app := fiber.New()
-	app.Get("/", AuthenticateJWT(&config.Config{JWTSecret: "secret"}), func(c *fiber.Ctx) error {
+	app.Get("/", AuthenticateJWT(&config.Config{JWT: config.JWTConfig{Secret: "secret"}}), func(c *fiber.Ctx) error {
 		if c.Locals("userId") != "user-1" || c.Locals("email") != "bayu@example.com" {
 			t.Fatalf("JWT locals were not set")
 		}
@@ -73,7 +73,7 @@ func TestAuthenticateJWT(t *testing.T) {
 
 func TestAuthenticateJWTOptionalIgnoresMissingToken(t *testing.T) {
 	app := fiber.New()
-	app.Get("/", AuthenticateJWTOptional(&config.Config{JWTSecret: "secret"}), func(c *fiber.Ctx) error {
+	app.Get("/", AuthenticateJWTOptional(&config.Config{JWT: config.JWTConfig{Secret: "secret"}}), func(c *fiber.Ctx) error {
 		if c.Locals("userId") != nil {
 			t.Fatalf("expected no user local for missing optional token")
 		}
