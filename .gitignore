@@ -33,3 +33,6 @@ Thumbs.db
 # Temporary files
 /tmp/
 /scratch/
+
+# Log files (generated at runtime)
+/logs/
