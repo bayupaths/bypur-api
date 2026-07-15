@@ -1,0 +1,21 @@
+name: Supabase Keep-Alive
+
+# Jalankan setiap 5 hari sekali (Supabase pause setelah 7 hari inaktivitas)
+on:
+  schedule:
+    - cron: "0 0 */5 * *" # Setiap 5 hari, pukul 00:00 UTC
+  workflow_dispatch: # Bisa dijalankan manual dari GitHub UI
+
+jobs:
+  ping:
+    name: Ping API to keep Supabase active
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping health endpoint
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ vars.API_BASE_URL }}/health")
+          echo "Health check status: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "::warning::Health check returned non-200 status: $STATUS"
+          fi
