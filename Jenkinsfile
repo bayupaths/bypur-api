@@ -136,8 +136,8 @@ pipeline {
   // Post-build Actions
   post {
     always {
-      // Bersihkan workspace setelah pipeline selesai berjalan
-      cleanWs()
+      // Bersihkan workspace menggunakan deleteDir() bawaan Jenkins Pipeline
+      deleteDir()
     }
     success {
       echo 'Pipeline completed successfully!'
