@@ -33,7 +33,7 @@ pipeline {
     stage('Go Test Coverage') {
       steps {
         sh 'go clean -testcache'
-        sh 'go test ./... -coverpkg=./internal/...,./pkg/... -coverprofile=coverage.out'
+        sh 'go test ./... -coverprofile=coverage.out'
         echo 'Go test coverage report generated'
       }
     }
