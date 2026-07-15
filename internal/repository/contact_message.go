@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"bayupur-portofolio-be/internal/model"
+	"github.com/bayupaths/bypur-api/internal/model"
 
 	"gorm.io/gorm"
 )

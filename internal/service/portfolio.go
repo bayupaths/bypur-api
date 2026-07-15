@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"bayupur-portofolio-be/internal/model"
-	"bayupur-portofolio-be/internal/repository"
+	"github.com/bayupaths/bypur-api/internal/model"
+	"github.com/bayupaths/bypur-api/internal/repository"
 )
 
 type PortfolioService struct {

@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/database"
-	"bayupur-portofolio-be/internal/handler"
-	"bayupur-portofolio-be/internal/middleware"
-	"bayupur-portofolio-be/internal/service"
-	"bayupur-portofolio-be/pkg/logger"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/database"
+	"github.com/bayupaths/bypur-api/internal/handler"
+	"github.com/bayupaths/bypur-api/internal/middleware"
+	"github.com/bayupaths/bypur-api/internal/service"
+	"github.com/bayupaths/bypur-api/pkg/logger"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -27,9 +27,9 @@ func Start() {
 	cfg := config.LoadConfig()
 
 	// 2. Inisialisasi Logger Terstruktur
-	logger.SetupLogger(cfg.LogLevel, cfg.LogFormat)
+	logger.SetupLogger(cfg.Log.Level, cfg.Log.Format)
 
-	slog.Info("Starting application bootstrap...", "app", cfg.AppName, "version", cfg.AppVersion)
+	slog.Info("Starting application bootstrap...", "app", cfg.App.Name, "version", cfg.App.Version)
 
 	// 3. Koneksi Database
 	db := database.ConnectDB(cfg)
@@ -42,7 +42,7 @@ func Start() {
 
 	// 6. Setup Fiber App
 	app := fiber.New(fiber.Config{
-		AppName:      cfg.AppName,
+		AppName:      cfg.App.Name,
 		ErrorHandler: middleware.GlobalErrorHandler,
 		BodyLimit:    10 * 1024 * 1024, // 10MB limit
 	})
@@ -63,9 +63,9 @@ func Start() {
 	signal.Notify(shutdownChan, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		addr := ":" + strconv.Itoa(cfg.Port)
-		slog.Info(fmt.Sprintf("[%s] v%s is running on port %d", cfg.AppName, cfg.AppVersion, cfg.Port))
-		slog.Info("Environment: " + cfg.Env)
+		addr := ":" + strconv.Itoa(cfg.Server.Port)
+		slog.Info(fmt.Sprintf("[%s] v%s is running on port %d", cfg.App.Name, cfg.App.Version, cfg.Server.Port))
+		slog.Info("Environment: " + cfg.App.Env)
 
 		if err := app.Listen(addr); err != nil && !strings.Contains(err.Error(), "closed") {
 			slog.Error("Failed to start Fiber server", "error", err)

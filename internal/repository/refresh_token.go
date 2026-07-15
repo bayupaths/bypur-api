@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"bayupur-portofolio-be/internal/model"
+	"github.com/bayupaths/bypur-api/internal/model"
 
 	"gorm.io/gorm"
 )

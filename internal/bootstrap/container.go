@@ -1,10 +1,10 @@
 package bootstrap
 
 import (
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/handler"
-	"bayupur-portofolio-be/internal/repository"
-	"bayupur-portofolio-be/internal/service"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/handler"
+	"github.com/bayupaths/bypur-api/internal/repository"
+	"github.com/bayupaths/bypur-api/internal/service"
 
 	"gorm.io/gorm"
 )

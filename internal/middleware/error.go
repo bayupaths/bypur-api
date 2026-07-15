@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"bayupur-portofolio-be/pkg/response"
+	"github.com/bayupaths/bypur-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 )

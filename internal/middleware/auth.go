@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/pkg/jwt"
-	"bayupur-portofolio-be/pkg/response"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/pkg/jwt"
+	"github.com/bayupaths/bypur-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 	jwt5 "github.com/golang-jwt/jwt/v5"
@@ -22,7 +22,7 @@ func AuthenticateJWT(cfg *config.Config) fiber.Handler {
 			return response.SendError(c, "No access token provided", "Unauthorized", http.StatusUnauthorized)
 		}
 
-		claims, err := jwt.VerifyToken(tokenStr, cfg.JWTSecret)
+		claims, err := jwt.VerifyToken(tokenStr, cfg.JWT.Secret)
 		if err != nil {
 			statusText := "Invalid token"
 			if errors.Is(err, jwt5.ErrTokenExpired) {
@@ -45,7 +45,7 @@ func AuthenticateJWTOptional(cfg *config.Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		tokenStr := extractToken(c)
 		if tokenStr != "" {
-			claims, err := jwt.VerifyToken(tokenStr, cfg.JWTSecret)
+			claims, err := jwt.VerifyToken(tokenStr, cfg.JWT.Secret)
 			if err == nil {
 				c.Locals("userId", claims.UserID)
 				c.Locals("email", claims.Email)

@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"time"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/service"
-	"bayupur-portofolio-be/pkg/request"
-	"bayupur-portofolio-be/pkg/response"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/service"
+	"github.com/bayupaths/bypur-api/pkg/request"
+	"github.com/bayupaths/bypur-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -79,7 +79,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		return response.SendError(c, err.Error(), "Login failed", http.StatusUnauthorized)
 	}
 
-	isSecure := h.cfg.Env == "production"
+	isSecure := h.cfg.IsProduction()
 	c.Cookie(&fiber.Cookie{
 		Name:     "refreshToken",
 		Value:    result.Tokens.RefreshToken,

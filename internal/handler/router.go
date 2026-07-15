@@ -4,9 +4,9 @@ import (
 	"strings"
 	"time"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/middleware"
-	"bayupur-portofolio-be/pkg/response"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/middleware"
+	"github.com/bayupaths/bypur-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -47,7 +47,7 @@ func (r *Router) Setup() {
 		Format: "[${time}] ${status} - ${latency} ${method} ${path}\n",
 	}))
 
-	allowOrigins := strings.Join(cfg.ParsedCorsOrigins, ", ")
+	allowOrigins := strings.Join(cfg.Server.ParsedCorsOrigins, ", ")
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     allowOrigins,
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, x-api-key",
@@ -57,7 +57,7 @@ func (r *Router) Setup() {
 
 	app.Use(limiter.New(limiter.Config{
 		Next: func(c *fiber.Ctx) bool {
-			return cfg.Env != "production"
+			return !cfg.IsProduction()
 		},
 		Max:        100,
 		Expiration: 15 * time.Minute,
@@ -77,9 +77,9 @@ func (r *Router) Setup() {
 
 	api.Get("/version", func(c *fiber.Ctx) error {
 		return response.SendSuccess(c, fiber.Map{
-			"app":         cfg.AppName,
-			"version":     cfg.AppVersion,
-			"environment": cfg.Env,
+			"app":         cfg.App.Name,
+			"version":     cfg.App.Version,
+			"environment": cfg.App.Env,
 		}, "Version retrieved successfully")
 	})
 

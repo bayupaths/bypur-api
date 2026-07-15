@@ -1,4 +1,4 @@
-module bayupur-portofolio-be
+module github.com/bayupaths/bypur-api
 
 go 1.25.4
 

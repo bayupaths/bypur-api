@@ -5,9 +5,9 @@ import (
 	"io"
 	"net/http"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/service"
-	"bayupur-portofolio-be/pkg/response"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/service"
+	"github.com/bayupaths/bypur-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 )

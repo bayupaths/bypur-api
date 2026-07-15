@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"bayupur-portofolio-be/internal/config"
+	"github.com/bayupaths/bypur-api/internal/config"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	s3Config "github.com/aws/aws-sdk-go-v2/config"
@@ -45,21 +45,21 @@ type StorageService struct {
 }
 
 func NewStorageService(cfg *config.Config) *StorageService {
-	if !cfg.R2Enabled {
+	if !cfg.Storage.Enabled {
 		return &StorageService{cfg: cfg}
 	}
 
-	endpoint := fmt.Sprintf("https://%s.r2.cloudflarestorage.com", cfg.R2AccountID)
-	baseUrl := cfg.R2PublicURL
+	endpoint := fmt.Sprintf("https://%s.r2.cloudflarestorage.com", cfg.Storage.AccountID)
+	baseUrl := cfg.Storage.PublicURL
 	if baseUrl == "" {
-		baseUrl = fmt.Sprintf("https://%s.%s.r2.cloudflarestorage.com", cfg.R2BucketName, cfg.R2AccountID)
+		baseUrl = fmt.Sprintf("https://%s.%s.r2.cloudflarestorage.com", cfg.Storage.Bucket, cfg.Storage.AccountID)
 	}
 
 	cfgSdk, err := s3Config.LoadDefaultConfig(context.TODO(),
 		s3Config.WithRegion("auto"),
 		s3Config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
-			cfg.R2AccessKeyID,
-			cfg.R2AccessKeySecret,
+			cfg.Storage.AccessKey,
+			cfg.Storage.SecretKey,
 			"",
 		)),
 	)
@@ -75,13 +75,13 @@ func NewStorageService(cfg *config.Config) *StorageService {
 	return &StorageService{
 		client:     client,
 		cfg:        cfg,
-		bucketName: cfg.R2BucketName,
+		bucketName: cfg.Storage.Bucket,
 		baseUrl:    baseUrl,
 	}
 }
 
 func (s *StorageService) CheckConnection(ctx context.Context) (bool, error) {
-	if !s.cfg.R2Enabled {
+	if !s.cfg.Storage.Enabled {
 		return false, fmt.Errorf("R2 storage is disabled")
 	}
 
@@ -97,7 +97,7 @@ func (s *StorageService) CheckConnection(ctx context.Context) (bool, error) {
 }
 
 func (s *StorageService) ListFiles(ctx context.Context, prefix *string) ([]FileInfo, error) {
-	if !s.cfg.R2Enabled {
+	if !s.cfg.Storage.Enabled {
 		return nil, fmt.Errorf("R2 storage is disabled")
 	}
 
@@ -155,7 +155,7 @@ func (s *StorageService) GetStorageInfo(ctx context.Context) (*StorageInfo, erro
 }
 
 func (s *StorageService) UploadFile(ctx context.Context, filename string, data []byte, contentType string) (*FileInfo, error) {
-	if !s.cfg.R2Enabled {
+	if !s.cfg.Storage.Enabled {
 		return nil, fmt.Errorf("R2 storage is disabled")
 	}
 
@@ -172,7 +172,7 @@ func (s *StorageService) UploadFile(ctx context.Context, filename string, data [
 	ext := path.Ext(filename)
 	base := strings.TrimSuffix(filename, ext)
 	base = strings.ToLower(base)
-	
+
 	reg := regexp.MustCompile("[^a-z0-9]")
 	baseClean := reg.ReplaceAllString(base, "-")
 
@@ -202,7 +202,7 @@ func (s *StorageService) UploadFile(ctx context.Context, filename string, data [
 }
 
 func (s *StorageService) DeleteFile(ctx context.Context, key string) error {
-	if !s.cfg.R2Enabled {
+	if !s.cfg.Storage.Enabled {
 		return fmt.Errorf("R2 storage is disabled")
 	}
 
@@ -220,7 +220,7 @@ func (s *StorageService) DeleteFile(ctx context.Context, key string) error {
 }
 
 func (s *StorageService) GetFileInfo(ctx context.Context, key string) (*FileInfo, error) {
-	if !s.cfg.R2Enabled {
+	if !s.cfg.Storage.Enabled {
 		return nil, fmt.Errorf("R2 storage is disabled")
 	}
 

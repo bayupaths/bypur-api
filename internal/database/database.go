@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"time"
 
-	"bayupur-portofolio-be/internal/config"
+	"github.com/bayupaths/bypur-api/internal/config"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -22,13 +22,13 @@ var migrationFS embed.FS
 
 func ConnectDB(cfg *config.Config) *gorm.DB {
 	var logMode logger.Interface
-	if cfg.Env == "development" {
+	if cfg.IsDevelopment() {
 		logMode = logger.Default.LogMode(logger.Info)
 	} else {
 		logMode = logger.Default.LogMode(logger.Error)
 	}
 
-	db, err := gorm.Open(postgres.Open(cfg.DatabaseURL), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(cfg.DB.URL), &gorm.Config{
 		Logger: logMode,
 	})
 	if err != nil {
@@ -50,7 +50,7 @@ func ConnectDB(cfg *config.Config) *gorm.DB {
 	slog.Info("PostgreSQL database connection successfully established")
 
 	// Run golang-migrate database migrations
-	runMigrations(cfg.DatabaseURL)
+	runMigrations(cfg.DB.URL)
 
 	DB = db
 	return db

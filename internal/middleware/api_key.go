@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/pkg/response"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -17,11 +17,11 @@ func AuthenticateApiKey(cfg *config.Config) fiber.Handler {
 			apiKey = c.Query("api_key")
 		}
 
-		if cfg.XApiKey == "" {
+		if cfg.Security.XApiKey == "" {
 			return response.SendError(c, "Server API Key is not configured", "Internal Server Error", http.StatusInternalServerError)
 		}
 
-		if apiKey == "" || apiKey != cfg.XApiKey {
+		if apiKey == "" || apiKey != cfg.Security.XApiKey {
 			return response.SendError(c, "Invalid or empty API Key", "Unauthorized", http.StatusUnauthorized)
 		}
 

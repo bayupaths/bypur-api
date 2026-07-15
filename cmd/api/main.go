@@ -1,6 +1,6 @@
 package main
 
-import "bayupur-portofolio-be/internal/bootstrap"
+import "github.com/bayupaths/bypur-api/internal/bootstrap"
 
 func main() {
 	bootstrap.Start()

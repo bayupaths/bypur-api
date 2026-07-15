@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"time"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/model"
-	"bayupur-portofolio-be/internal/repository"
-	"bayupur-portofolio-be/pkg/jwt"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/model"
+	"github.com/bayupaths/bypur-api/internal/repository"
+	"github.com/bayupaths/bypur-api/pkg/jwt"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -66,22 +66,22 @@ func (s *AuthService) VerifyPassword(password, hash string) bool {
 
 // GenerateAccessToken membuat JWT access token menggunakan pkg/jwt
 func (s *AuthService) GenerateAccessToken(user *model.User) (string, error) {
-	duration, err := time.ParseDuration(s.cfg.JWTAccessExpire)
+	duration, err := time.ParseDuration(s.cfg.JWT.AccessExpire)
 	if err != nil {
 		duration = 15 * time.Minute
 	}
 
-	return jwt.GenerateToken(user.ID, user.Email, s.cfg.JWTSecret, duration, "bypur-api")
+	return jwt.GenerateToken(user.ID, user.Email, s.cfg.JWT.Secret, duration, "bypur-api")
 }
 
 // GenerateRefreshToken membuat token refresh, menyimpannya di DB dan mengembalikan token string
 func (s *AuthService) GenerateRefreshToken(ctx context.Context, userID string) (string, error) {
-	duration, err := time.ParseDuration(s.cfg.JWTRefreshExpire)
+	duration, err := time.ParseDuration(s.cfg.JWT.RefreshExpire)
 	if err != nil {
 		duration = 7 * 24 * time.Hour
 	}
 
-	tokenStr, err := jwt.GenerateToken(userID, "", s.cfg.JWTSecret+"refresh", duration, "bypur-api")
+	tokenStr, err := jwt.GenerateToken(userID, "", s.cfg.JWT.Secret+"refresh", duration, "bypur-api")
 	if err != nil {
 		return "", err
 	}
@@ -171,7 +171,7 @@ func (s *AuthService) Login(ctx context.Context, identifier, password, ip string
 // RefreshAccessToken memperbarui access token menggunakan refresh token yang masih valid
 func (s *AuthService) RefreshAccessToken(ctx context.Context, tokenStr string) (string, error) {
 	// Verifikasi refresh token menggunakan pkg/jwt
-	claims, err := jwt.VerifyToken(tokenStr, s.cfg.JWTSecret+"refresh")
+	claims, err := jwt.VerifyToken(tokenStr, s.cfg.JWT.Secret+"refresh")
 	if err != nil {
 		return "", errors.New("invalid or expired refresh token")
 	}

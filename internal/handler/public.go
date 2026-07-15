@@ -3,11 +3,11 @@ package handler
 import (
 	"net/http"
 
-	"bayupur-portofolio-be/internal/config"
-	"bayupur-portofolio-be/internal/dto"
-	"bayupur-portofolio-be/internal/service"
-	"bayupur-portofolio-be/pkg/request"
-	"bayupur-portofolio-be/pkg/response"
+	"github.com/bayupaths/bypur-api/internal/config"
+	"github.com/bayupaths/bypur-api/internal/dto"
+	"github.com/bayupaths/bypur-api/internal/service"
+	"github.com/bayupaths/bypur-api/pkg/request"
+	"github.com/bayupaths/bypur-api/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -144,7 +144,7 @@ func (h *PublicPortfolioHandler) SubmitContact(c *fiber.Ctx) error {
 		return response.SendError(c, err.Error(), "Failed to save message", http.StatusInternalServerError)
 	}
 
-	if h.cfg.SMTPEnabled && h.cfg.FeatureEmail {
+	if h.cfg.IsMailEnabled() {
 		go func(name, email, message string) {
 			_ = h.mailService.SendContactFormEmail(name, email, message)
 		}(req.Name, req.Email, req.Message)
