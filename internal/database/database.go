@@ -36,7 +36,6 @@ func ConnectDB(cfg *config.Config) *gorm.DB {
 		panic(err)
 	}
 
-	// Mengatur connection pool
 	sqlDB, err := db.DB()
 	if err != nil {
 		slog.Error("Failed to retrieve SQL DB instance", "error", err)
@@ -49,11 +48,35 @@ func ConnectDB(cfg *config.Config) *gorm.DB {
 
 	slog.Info("PostgreSQL database connection successfully established")
 
-	// Run golang-migrate database migrations
 	runMigrations(cfg.DB.URL)
 
 	DB = db
 	return db
+}
+
+func Close(db *gorm.DB) {
+	sqlDB, err := db.DB()
+	if err != nil {
+		slog.Warn("Failed to retrieve SQL DB instance for closing", "error", err)
+		return
+	}
+	slog.Info("Closing database connection pool...")
+	if err := sqlDB.Close(); err != nil {
+		slog.Warn("Failed to close database connection pool", "error", err)
+	}
+}
+
+func StartKeepAlive(db *gorm.DB) {
+	ticker := time.NewTicker(6 * time.Hour)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		if err := db.Exec("SELECT 1").Error; err != nil {
+			slog.Warn("DB keep-alive ping failed", "error", err)
+		} else {
+			slog.Info("DB keep-alive ping successful")
+		}
+	}
 }
 
 func runMigrations(databaseURL string) {
