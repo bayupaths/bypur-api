@@ -54,7 +54,7 @@ pipeline {
               if [ "$SONAR_HOST_URL" = "null" ] || [ -z "$SONAR_HOST_URL" ]; then
                 export SONAR_HOST_URL="http://localhost:9000"
               fi
-              npx -y @sonar-scanner/cli -Dsonar.token="${SONAR_TOKEN}" -Dsonar.host.url="${SONAR_HOST_URL}"
+              npx -y @sonar/scan -Dsonar.token="${SONAR_TOKEN}" -Dsonar.host.url="${SONAR_HOST_URL}"
             '''
           }
           echo 'SonarQube analysis completed'
