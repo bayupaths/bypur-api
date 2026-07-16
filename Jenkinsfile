@@ -6,7 +6,7 @@ pipeline {
 
   environment {
     PRODUCTION_SERVER_IP = "${env.PRODUCTION_SERVER_IP}"
-    SONAR_HOST_URL       = "${env.SONAR_HOST_URL}"
+    SONAR_HOST_URL       = 'https://sonar.bypur.my.id'
     DOCKER_IMAGE         = 'bypur-api-go'
     GOROOT               = '/usr/local/go'
     PATH                 = "${env.GOROOT}/bin:${env.PATH}"
@@ -47,10 +47,6 @@ pipeline {
         script {
           withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
             sh '''
-              if [ "$SONAR_HOST_URL" = "null" ] || [ -z "$SONAR_HOST_URL" ]; then
-                export SONAR_HOST_URL="http://localhost:9000"
-              fi
-              
               # Download SonarScanner CLI
               echo "Downloading SonarScanner CLI..."
               curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip
@@ -84,12 +80,16 @@ pipeline {
             withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
               def qg = sh(
                 script: '''
-                  if [ "$SONAR_HOST_URL" = "null" ] || [ -z "$SONAR_HOST_URL" ]; then
-                    export SONAR_HOST_URL="http://localhost:9000"
-                  fi
-                  curl -s -u "${SONAR_TOKEN}": \
-                    "${SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=bayupur-portofolio-be" \
-                    | grep -o '"status":"[^"]*"' | head -n 1 | cut -d'"' -f4
+                  STATUS="NONE"
+                  for i in {1..12}; do
+                    STATUS=$(curl -s -u "${SONAR_TOKEN}": "${SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=bayupur-portofolio-be" | grep -o '"status":"[^"]*"' | head -n 1 | cut -d'"' -f4 || echo "NONE")
+                    if [ "$STATUS" != "NONE" ] && [ ! -z "$STATUS" ]; then
+                      break
+                    fi
+                    echo "Quality Gate status is still pending... waiting 5 seconds (attempt $i/12)..." >&2
+                    sleep 5
+                  done
+                  echo "$STATUS"
                 ''',
                 returnStdout: true
               ).trim()
