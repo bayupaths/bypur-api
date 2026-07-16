@@ -10,6 +10,7 @@ pipeline {
     DOCKER_IMAGE         = 'bypur-api-go'
     GOROOT               = '/usr/local/go'
     PATH                 = "${env.GOROOT}/bin:${env.PATH}"
+    GOTOOLCHAIN          = 'go1.25.4'
   }
 
   stages {
@@ -24,6 +25,8 @@ pipeline {
     // 2. Go Build Check
     stage('Go Build Check') {
       steps {
+        sh 'go version'
+        sh 'go env'
         sh 'go build ./...'
         echo 'Go project compilation check passed'
       }
