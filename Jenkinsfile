@@ -4,9 +4,13 @@
 pipeline {
   agent any
 
+  tools {
+    nodejs 'NodeJS-20'
+  }
+
   environment {
     PRODUCTION_SERVER_IP = "${env.PRODUCTION_SERVER_IP}"
-    SONAR_HOST_URL       = "${env.SONAR_HOST_URL}"
+    SONAR_HOST_URL       = (env.SONAR_HOST_URL == 'null' || !env.SONAR_HOST_URL) ? 'http://localhost:9000' : env.SONAR_HOST_URL
     DOCKER_IMAGE         = 'bypur-api-go'
     GOROOT               = '/usr/local/go'
     PATH                 = "${env.GOROOT}/bin:${env.PATH}"
@@ -46,7 +50,7 @@ pipeline {
       steps {
         script {
           withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
-            sh "sonar-scanner -Dsonar.token=${SONAR_TOKEN} -Dsonar.host.url=${SONAR_HOST_URL}"
+            sh 'npx -y @sonar-scanner/cli -Dsonar.token=${SONAR_TOKEN} -Dsonar.host.url=${SONAR_HOST_URL}'
           }
           echo 'SonarQube analysis completed'
         }
@@ -61,11 +65,11 @@ pipeline {
             // Tunggu hasil quality gate dari SonarQube
             withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
               def qg = sh(
-                script: """
-                  curl -s -u ${SONAR_TOKEN}: \
-                    '${SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=bayupur-portofolio-be' \
+                script: '''
+                  curl -s -u "${SONAR_TOKEN}": \
+                    "${SONAR_HOST_URL}/api/qualitygates/project_status?projectKey=bayupur-portofolio-be" \
                     | grep -o '"status":"[^"]*"' | head -n 1 | cut -d'"' -f4
-                """,
+                ''',
                 returnStdout: true
               ).trim()
               
