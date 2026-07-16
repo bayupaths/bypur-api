@@ -121,18 +121,17 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          withCredentials([
-            string(credentialsId: 'database-url', variable: 'DATABASE_URL'),
-            string(credentialsId: 'jwt-secret', variable: 'JWT_SECRET'),
-            string(credentialsId: 'cors-origin', variable: 'CORS_ORIGIN'),
-            string(credentialsId: 'x-api-key', variable: 'X_API_KEY')
-          ]) {
+          withCredentials([file(credentialsId: 'portfolio-be-env', variable: 'ENV_SECRET')]) {
+            def secretContent = readFile(file: ENV_SECRET)
+            
+            writeFile file: '.env', text: secretContent
+            
             sh '''
               # Stop dan hapus container lama jika ada
               docker stop bypur_api_go || true
               docker rm bypur_api_go || true
               
-              # Jalankan container baru terhubung ke bypur_network
+              # Jalankan container baru terhubung ke bypur_network menggunakan --env-file
               docker run -d \
                 --name bypur_api_go \
                 --network bypur_network \
@@ -140,12 +139,7 @@ pipeline {
                 --cpus="0.5" \
                 --restart=unless-stopped \
                 -p 3001:3001 \
-                -e APP_ENV=production \
-                -e SERVER_PORT=3001 \
-                -e DB_URL="${DATABASE_URL}" \
-                -e JWT_SECRET="${JWT_SECRET}" \
-                -e SERVER_CORS_ORIGIN="${CORS_ORIGIN}" \
-                -e SECURITY_X_API_KEY="${X_API_KEY}" \
+                --env-file .env \
                 bypur-api-go:latest
               
               # Tunggu container start
@@ -165,7 +159,6 @@ pipeline {
   // Post-build Actions
   post {
     always {
-      // Bersihkan workspace menggunakan deleteDir() bawaan Jenkins Pipeline
       deleteDir()
     }
     success {
