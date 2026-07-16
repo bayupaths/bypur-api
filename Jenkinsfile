@@ -131,6 +131,9 @@ pipeline {
               docker stop bypur_api_go || true
               docker rm bypur_api_go || true
               
+              # Pastikan docker network bypur_network sudah dibuat
+              docker network create bypur_network || true
+              
               # Jalankan container baru terhubung ke bypur_network menggunakan --env-file
               docker run -d \
                 --name bypur_api_go \
