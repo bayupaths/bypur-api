@@ -4,10 +4,6 @@
 pipeline {
   agent any
 
-  tools {
-    nodejs 'NodeJS-20'
-  }
-
   environment {
     PRODUCTION_SERVER_IP = "${env.PRODUCTION_SERVER_IP}"
     SONAR_HOST_URL       = "${env.SONAR_HOST_URL}"
@@ -54,7 +50,24 @@ pipeline {
               if [ "$SONAR_HOST_URL" = "null" ] || [ -z "$SONAR_HOST_URL" ]; then
                 export SONAR_HOST_URL="http://localhost:9000"
               fi
-              npx -y @sonar/scan -Dsonar.token="${SONAR_TOKEN}" -Dsonar.host.url="${SONAR_HOST_URL}"
+              
+              # Download SonarScanner CLI
+              echo "Downloading SonarScanner CLI..."
+              curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip
+              
+              # Extract the zip file
+              echo "Extracting SonarScanner CLI..."
+              unzip -o -q sonar-scanner.zip
+              
+              # Run the analysis
+              echo "Running SonarQube Analysis..."
+              ./sonar-scanner-6.2.1.4610-linux-x64/bin/sonar-scanner \
+                -Dsonar.token="${SONAR_TOKEN}" \
+                -Dsonar.host.url="${SONAR_HOST_URL}"
+              
+              # Clean up downloaded files
+              echo "Cleaning up..."
+              rm -rf sonar-scanner-6.2.1.4610-linux-x64 sonar-scanner.zip
             '''
           }
           echo 'SonarQube analysis completed'
